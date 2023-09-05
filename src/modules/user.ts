@@ -1,3 +1,4 @@
+import { MongoGetDetailUserRepository } from '../repositories/get-detail-user/mongo-get-detail-user';
 import { CreateUserController } from '../controllers/create-user/create-user';
 import { DeleteUserController } from '../controllers/delete-user/delete-user';
 import { GetUsersController } from '../controllers/get-users/get-users';
@@ -7,6 +8,7 @@ import { MongoDeleteUserRepository } from '../repositories/delete-user/mongo-del
 import { MongoGetUsersRepository } from '../repositories/get-users/mongo-get-users';
 import { MongoUpdateUserRepository } from '../repositories/update-user/mongo-update-user';
 import { Router } from 'express';
+import { GetUserDetailController } from '../controllers/get-detail-user/get-detail-user';
 
 export const routes = Router();
 
@@ -27,6 +29,19 @@ routes.post('/', async (req, res) => {
 
   const { body, statusCode } = await createUserController.handle({
     body: req.body,
+  });
+
+  res.status(statusCode).send(body);
+});
+
+routes.get('/:id', async (req, res) => {
+  const mongoGetDetailUserRepository = new MongoGetDetailUserRepository();
+  const getDetailUserController = new GetUserDetailController(
+    mongoGetDetailUserRepository,
+  );
+
+  const { body, statusCode } = await getDetailUserController.handle({
+    params: req.params,
   });
 
   res.status(statusCode).send(body);
